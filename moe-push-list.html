@@ -1,0 +1,148 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../moe-push/moe-push.html">
+<dom-module id="moe-push-list">
+    <style>
+    :host {
+        display: inline-block;
+        box-sizing: border-box;
+    }    
+
+    /* Custom Style : paper-checkbox */
+    #checkbox {
+        float: left;
+        padding: 3px;
+        --paper-checkbox-unchecked-color: var(--comment-color);
+    }
+    #checkbox::shadow #checkmark {
+        display: none;
+    }    
+    #checkbox::shadow #checkmark {
+        display: none;
+    }
+    #checkbox::shadow #checkbox:not(.checked) {
+        border-radius: 8px;
+    }
+    #checkbox::shadow #checkboxContainer {
+        width: 12px;
+        height: 12px;
+        padding: 3px;
+    }
+    </style>
+    <template>
+        <template is="dom-repeat" items="{{datas}}">
+            <paper-checkbox id="checkbox"></paper-checkbox>
+            <moe-push id="push" kaomonji="(ﾟ∀ﾟ)：<" identity="{{item.identity}}" ip="{{item.ip}}" date="{{item.date}}" time="{{item.time}}">{{item.content}}</moe-push>
+        </template>
+    </template>
+</dom-module>
+<script>
+Polymer({
+
+    is: 'moe-push-list',
+
+    properties: {
+
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+        // `ready` is called after all elements have been configured, but
+        // propagates bottom-up. This element's children are ready, but parents
+        // are not.
+        //
+        // This is the point where you should make modifications to the DOM (when
+        // necessary), or kick off any processes the element wants to perform.
+
+        // editor http://beta.json-generator.com/Fmn_rUq
+        this.datas = [{
+            "content": "Magna elit fugiat minim eu Lorem dolore duis deserunt enim enim duis laboris sunt.",
+            "index": 0,
+            "ip": "97.045.538.12",
+            "time": "09:17:23",
+            "date": "2015/04/10",
+            "identity": "556df4f2"
+        }, {
+            "content": "Deserunt sunt cupidatat sit aliqua laborum sit amet culpa et.",
+            "index": 1,
+            "ip": "94.243.521.27",
+            "time": "10:41:41",
+            "date": "2015/05/31",
+            "identity": "556df4f2"
+        }, {
+            "content": "Proident magna reprehenderit excepteur deserunt reprehenderit dolore id fugiat.",
+            "index": 2,
+            "ip": "86.553.438.25",
+            "time": "08:20:51",
+            "date": "2015/03/31",
+            "identity": "556df4f2"
+        }, {
+            "content": "Excepteur pariatur excepteur aliquip aliqua.",
+            "index": 3,
+            "ip": "98.247.537.30",
+            "time": "03:49:46",
+            "date": "2015/04/19",
+            "identity": "556df4f2"
+        }, {
+            "content": "Aliqua dolore id aliquip velit amet pariatur aute labore veniam ea consequat excepteur nostrud.",
+            "index": 4,
+            "ip": "94.247.239.11",
+            "time": "09:18:20",
+            "date": "2015/03/23",
+            "identity": "556df4f2"
+        }, {
+            "content": "Deserunt duis velit pariatur in nisi commodo ea aliqua aute mollit ad aliquip.",
+            "index": 5,
+            "ip": "84.453.923.09",
+            "time": "07:59:15",
+            "date": "2015/03/28",
+            "identity": "556df4f2"
+        }, {
+            "content": "Aliquip incididunt pariatur reprehenderit sit voluptate aliqua et laboris qui voluptate ullamco.",
+            "index": 6,
+            "ip": "82.959.330.31",
+            "time": "11:08:01",
+            "date": "2015/05/27",
+            "identity": "556df4f2"
+        }, {
+            "content": "Do exercitation incididunt cillum velit irure fugiat.",
+            "index": 7,
+            "ip": "93.748.232.03",
+            "time": "06:34:52",
+            "date": "2015/04/19",
+            "identity": "556df4f2"
+        }, {
+            "content": "Voluptate id qui occaecat elit elit ex laborum nisi minim quis laboris labore occaecat.",
+            "index": 8,
+            "ip": "91.640.135.45",
+            "time": "11:56:23",
+            "date": "2015/02/13",
+            "identity": "556df4f2"
+        }, {
+            "content": "Occaecat et cupidatat fugiat aliquip ea amet fugiat magna nisi excepteur.",
+            "index": 9,
+            "ip": "98.349.636.19",
+            "time": "04:13:25",
+            "date": "2015/05/22",
+            "identity": "556df4f2"
+        }];
+    },
+
+    attached: function() {
+        // `attached` fires once the element and its parents have been inserted
+        // into a document.
+        //
+        // This is a good place to perform any work related to your element's
+        // visual state or active behavior (measuring sizes, beginning animations,
+        // loading resources, etc).
+    },
+
+    detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+    }
+});
+</script>
