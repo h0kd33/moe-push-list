@@ -6,23 +6,34 @@
     :host {
         display: inline-block;
         box-sizing: border-box;
-    }    
-
+        outline: 1px solid gray;
+        background-color: white;
+        padding: 10px 0px;
+    }
+    
+    #push-container {
+        clear: both;
+    }
     /* Custom Style : paper-checkbox */
+    
     #checkbox {
         float: left;
         padding: 3px;
         --paper-checkbox-unchecked-color: var(--comment-color);
     }
-    #checkbox::shadow #checkmark {
-        display: none;
-    }    
+    
     #checkbox::shadow #checkmark {
         display: none;
     }
+    
+    #checkbox::shadow #checkmark {
+        display: none;
+    }
+    
     #checkbox::shadow #checkbox:not(.checked) {
         border-radius: 8px;
     }
+    
     #checkbox::shadow #checkboxContainer {
         width: 12px;
         height: 12px;
