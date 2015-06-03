@@ -42,8 +42,10 @@
     </style>
     <template>
         <template is="dom-repeat" items="{{datas}}">
-            <paper-checkbox id="checkbox"></paper-checkbox>
-            <moe-push id="push" kaomonji="(ﾟ∀ﾟ)：<" identity="{{item.identity}}" ip="{{item.ip}}" date="{{item.date}}" time="{{item.time}}">{{item.content}}</moe-push>
+            <div id="push-container">
+                <paper-checkbox id="checkbox"></paper-checkbox>
+                <moe-push id="push" kaomonji="(ﾟ∀ﾟ)：<" identity="{{item.identity}}" ip="{{item.ip}}" date="{{item.date}}" time="{{item.time}}">{{item.content}}</moe-push>
+            </div>
         </template>
     </template>
 </dom-module>
