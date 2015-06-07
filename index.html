@@ -11,5 +11,19 @@
 <body>
     <moe-push-list></moe-push-list>
 </body>
-
+<script>
+	
+	// Inject Json Datas
+	function injectJson(e) {
+	    var t = document.querySelector('moe-push-list');
+	    t.datas = e;
+	    console.log( 'Target: ' + t+ ' Success! ');
+	};
+	(function loadJson() {             
+	    var script = document.createElement('script');
+	    script.src = 'http://beta.json-generator.com/api/json/get/Fmn_rUq?callback=injectJson';
+	    document.body.appendChild(script);
+	    console.log( 'Loaded');
+	})(); 
+</script>
 </html>
