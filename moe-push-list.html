@@ -1,10 +1,9 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../moe-push/moe-push.html">
 <dom-module id="moe-push-list">
     <style>
     :host {
-        display: inline-block;
+        display: table;
         box-sizing: border-box;
         outline: 1px solid gray;
         background-color: white;
@@ -44,19 +43,26 @@
         <template is="dom-repeat" items="[[datas]]">
             <div id="push-container">
                 <paper-checkbox id="checkbox"></paper-checkbox>
-                <moe-push id="push" kaomonji="(ﾟ∀ﾟ)：<" identity="[[item.identity]]" ip="[[item.ip]]" date="[[item.date]]" time="[[item.time]]">[[item.content]]</moe-push>
+                <div id="push">
+                    <span id="kaomonji">(ﾟ∀ﾟ)：<</span>
+                    <span>[[item.content]]</span>
+                    <span id="postInfo">[[_computePostInfo( item.identity , item.date, item.time)]]</span>
+                    <span id="ip">[[item.ip]]</span>
+                </div>
             </div>
         </template>
     </template>
 </dom-module>
 <script>
-
 Polymer({
 
     is: 'moe-push-list',
 
     properties: {
 
+    },
+    _computePostInfo: function(identity, date, time) {
+        return '(' + identity + ' ' + date + ' ' + time + ')';
     }
 });
 </script>
