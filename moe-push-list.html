@@ -1,5 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../moe-style/moe-style.html">
 <dom-module id="moe-push-list">
     <style>
     :host {
@@ -7,11 +8,14 @@
         box-sizing: border-box;
         outline: 1px solid gray;
         background-color: white;
-        padding: 10px 0px;
+        padding: 10px 5px;
+        color: var(--font-color);
     }
     
     #push-container {
         clear: both;
+        max-height: 80vh;   
+        overflow-y: auto;
     }
     /* Custom Style : paper-checkbox */
     
@@ -38,19 +42,29 @@
         height: 12px;
         padding: 3px;
     }
+    #openBtn {
+        width: 100%;
+    }
     </style>
     <template>
-        <template is="dom-repeat" items="[[datas]]">
-            <div id="push-container">
-                <paper-checkbox id="checkbox"></paper-checkbox>
-                <div id="push">
+        <div id="push-container" >
+            <template id="repeat" is="dom-repeat" items="[[renderedData]]">
+                <template is="dom-if" if="{{isAdmin}}">
+                    <paper-checkbox id="checkbox"></paper-checkbox>
+                </template>
+                <div id="push" class="layout horizontal start">
                     <span id="kaomonji">(ﾟ∀ﾟ)：<</span>
-                    <span>[[item.content]]</span>
+                    <span class="flex">[[item.content]]</span>
                     <span id="postInfo">[[_computePostInfo( item.identity , item.date, item.time)]]</span>
-                    <span id="ip">[[item.ip]]</span>
+                    <template is="dom-if" if="{{isAdmin}}">
+                        <span id="ip">[[item.ip]]</span>
+                    </template>
                 </div>
-            </div>
-        </template>
+            </template>
+            <template is="dom-if" if="{{collapse}}">
+                <button type="" id="openBtn" on-tap="openPushes">展開</button>
+            </template>
+        </div>
     </template>
 </dom-module>
 <script>
@@ -59,10 +73,44 @@ Polymer({
     is: 'moe-push-list',
 
     properties: {
-
+        displayCounts: {
+            type: Number,
+            value: 8
+        },
+        collapse: {
+            type: Boolean,
+            value: true,
+            reflectToAttribute: true
+        },
+        datas: {
+            type: Object,
+            observer: "_renderData"
+        },
+        renderedData: Object,
+        isAdmin: {
+            value: false
+        }
+    },
+    openPushes: function() {
+        this.renderedData = this.renderedData.concat ( this.datas.slice( this.displayCounts + 1, this.datas.length));
+        this.collapse = false;
     },
     _computePostInfo: function(identity, date, time) {
         return '(' + identity + ' ' + date + ' ' + time + ')';
+    },
+    _renderData: function(datas) {
+        var t = this;
+        var that = this.datas;
+        var counts = this.displayCounts;
+
+        function render() {
+            t.renderedData = that.slice(0, counts);
+            console.log('rendered');
+        }
+        render();
+    },
+    change: function() {
+        console.log( 'changed');
     }
 });
 </script>
