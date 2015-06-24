@@ -11,11 +11,8 @@
         padding: 5px 5px;
         color: var(--font-color);
         font-size: 0.8em;
-    }
-    
-    #push-container {
         clear: both;
-        max-height: 80vh;   
+        max-height: 80vh;
         max-width: 400px;
         overflow-y: auto;
     }
@@ -44,39 +41,39 @@
         height: 12px;
         padding: 3px;
     }
+    
     #content {
         padding: 0 3px;
         min-width: 300px;
     }
+    
     #postInfo {
         color: gray;
         font-size: 10px;
     }
+    
     #openBtn {
         width: 100%;
     }
     </style>
     <template>
-        <div id="push-container" >
-            <template id="repeat" is="dom-repeat" items="[[renderedData]]">
+        <template id="repeat" is="dom-repeat" items="[[renderedData]]">
+            <template is="dom-if" if="{{isAdmin}}">
+                <paper-checkbox id="checkbox"></paper-checkbox>
+            </template>
+            <div id="push" class="layout horizontal wrap end-justified">
+                <span id="kaomonji">(ﾟ∀ﾟ)：<</span>
+                <span id="content" class="flex self-center">[[item.content]]</span>
+                <span id="postInfo">[[_computePostInfo( item.identity , item.date, item.time)]]</span>
                 <template is="dom-if" if="{{isAdmin}}">
-                    <paper-checkbox id="checkbox"></paper-checkbox>
+                    <span id="ip">[[item.ip]]</span>
                 </template>
-                <div id="push" class="layout horizontal wrap end-justified">
-                    <span id="kaomonji">(ﾟ∀ﾟ)：<</span>
-                    <span id="content" class="flex self-center">[[item.content]]</span>
-                    <span id="postInfo">[[_computePostInfo( item.identity , item.date, item.time)]]</span>
-                    <template is="dom-if" if="{{isAdmin}}">
-                        <span id="ip">[[item.ip]]</span>
-                    </template>
-                </div>
-            </template>
-            <template is="dom-if" if="{{collapse}}">
-                <button type="" id="openBtn" on-tap="openPushes">展開</button>
-            </template>
-            <div id="pushForm">
-                
             </div>
+        </template>
+        <template is="dom-if" if="{{collapse}}">
+            <button type="" id="openBtn" on-tap="openPushes">展開</button>
+        </template>
+        <div id="pushForm">
         </div>
     </template>
 </dom-module>
@@ -105,7 +102,7 @@ Polymer({
         }
     },
     openPushes: function() {
-        this.renderedData = this.renderedData.concat ( this.datas.slice( this.displayCounts + 1, this.datas.length));
+        this.renderedData = this.renderedData.concat(this.datas.slice(this.displayCounts + 1, this.datas.length));
         this.collapse = false;
     },
     _computePostInfo: function(identity, date, time) {
@@ -123,7 +120,7 @@ Polymer({
         render();
     },
     change: function() {
-        console.log( 'changed');
+        console.log('changed');
     }
 });
 </script>
