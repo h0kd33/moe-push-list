@@ -12,18 +12,38 @@
     <moe-push-list></moe-push-list>
 </body>
 <script>
+// Inject Json Datas
+var t = document.querySelector('moe-push-list');
+var jsonGen, chtTextGen;
+
+
+function injectJson(e) {
+        jsonGen = e;
+        t.datas = e;
+    }
+    (function loadJson() {
+        var script = document.createElement('script');
+        script.src = 'http://beta.json-generator.com/api/json/get/Fmn_rUq?callback=injectJson';
+        document.body.appendChild(script);
+    })();
+
+// 廢文產生器... 會error
+
+/* function chttext(e) {
+		chtTextGen = e;
+		console.log( chtTextGen);
+	}
+	(function loadChtText() {
+		var script = document.createElement('script');
+		script.src = 'http://more.handlino.com/sentences.json?n=100?callback=chttext';
+		document.body.appendChild(script);		
+	})();
+
 	
-	// Inject Json Datas
-	function injectJson(e) {
-	    var t = document.querySelector('moe-push-list');
-	    t.datas = e;
-	    console.log( 'Target: ' + t+ ' Success! ');
-	};
-	(function loadJson() {             
-	    var script = document.createElement('script');
-	    script.src = 'http://beta.json-generator.com/api/json/get/Fmn_rUq?callback=injectJson';
-	    document.body.appendChild(script);
-	    console.log( 'Loaded');
-	})(); 
+for (var i in jsonGen) {
+    jsonGen[i][content] = chtTextGen[sentences][i];
+}
+*/
 </script>
+
 </html>
