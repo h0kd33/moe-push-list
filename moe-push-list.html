@@ -1,126 +1,155 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../moe-style/moe-style.html">
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-checkbox/paper-checkbox.html">
+
 <dom-module id="moe-push-list">
-    <style>
-    :host {
-        display: block;
-        box-sizing: border-box;
-        outline: 1px solid gray;
-        background-color: white;
-        padding: 5px 5px;
-        color: var(--font-color);
-        font-size: 0.8em;
-        clear: both;
-        max-height: 80vh;
-        max-width: 400px;
-        overflow-y: auto;
-    }
-    /* Custom Style : paper-checkbox */
-    
-    #checkbox {
-        float: left;
-        padding: 3px;
-        --paper-checkbox-unchecked-color: var(--comment-color);
-    }
-    
-    #checkbox::shadow #checkmark {
-        display: none;
-    }
-    
-    #checkbox::shadow #checkmark {
-        display: none;
-    }
-    
-    #checkbox::shadow #checkbox:not(.checked) {
-        border-radius: 8px;
-    }
-    
-    #checkbox::shadow #checkboxContainer {
-        width: 12px;
-        height: 12px;
-        padding: 3px;
-    }
-    
-    #content {
-        padding: 0 3px;
-        min-width: 300px;
-    }
-    
-    #postInfo {
-        color: gray;
-        font-size: 10px;
-    }
-    
-    #openBtn {
-        width: 100%;
-    }
-    </style>
     <template>
-        <template id="repeat" is="dom-repeat" items="[[renderedData]]">
-            <template is="dom-if" if="{{isAdmin}}">
-                <paper-checkbox id="checkbox"></paper-checkbox>
-            </template>
-            <div id="push" class="layout horizontal wrap end-justified">
-                <span id="kaomonji">(ﾟ∀ﾟ)：<</span>
-                <span id="content" class="flex self-center">[[item.content]]</span>
-                <span id="postInfo">[[_computePostInfo( item.identity , item.date, item.time)]]</span>
+        <style>
+
+            :host {
+                display: table;
+                box-sizing: border-box;
+                outline: 1px solid gray;
+                background-color: white;
+                padding: 5px 5px;
+                color: maroon;
+                font-size: 13px;
+                clear: both;
+                overflow-y: auto;
+                font-family: '新細明體', sans-serif;
+            }
+            /* Custom Style : paper-checkbox */
+
+            #checkbox {
+                float: left;
+                padding: 3px;
+                /*--paper-checkbox-unchecked-color: var(--comment-color);*/
+            }
+
+            #checkbox::shadow #checkmark {
+                display: none;
+            }
+
+            #checkbox::shadow #checkmark {
+                display: none;
+            }
+
+            #checkbox::shadow #checkbox:not(.checked) {
+                border-radius: 8px;
+            }
+
+            #checkbox::shadow #checkboxContainer {
+                width: 12px;
+                height: 12px;
+                padding: 3px;
+            }
+            #push {
+                padding: 4px 0;
+            }
+            #emoji {
+                font-family: 'MS Gothic','sans-serif';
+            }
+            #text {
+                line-height: 1.6;
+            }
+            #idColor {
+                display: inline-block;
+                float: right;
+                height: 0.8em;
+                width: 0.4em;
+            }
+            #content {
+                padding: 0 3px;
+                min-width: 300px;
+            }
+
+            #postInfo {
+                color: gray;
+                font-size: 10px;
+            }
+
+            #openBtn {
+                width: 100%;
+            }
+        </style>
+        <div id="container">
+            <template id="pushRepeat" is="dom-repeat" items="[[data]]" as="item" observe="data" filter="_pushFilter">
                 <template is="dom-if" if="{{isAdmin}}">
-                    <span id="ip">[[item.ip]]</span>
+                    <paper-checkbox id="checkbox"></paper-checkbox>
                 </template>
+                <div id="push" class="layout horizontal wrap end-justified">
+                    <span id="emoji">(ﾟ∀ﾟ)：<</span>
+                    <span id="text" class="flex self-center">[[item.text]]</span>
+                    <span id="idColor" style$="{{_computeIdColor(item.idColor)}}" title$="{{item.id}}"></span>
+                    <template is="dom-if">
+                        <span id="info">[[_computePostInfo(item.id, item.date, item.time)]]</span>
+                        <span id="ip">[[item.ip]]</span>
+                    </template>
+                </div>
+            </template>
+            <template is="dom-if" if="{{collapse}}">
+                <button type="" id="openBtn" on-tap="expand">展開</button>
+            </template>
+            <div id="pushForm">
             </div>
-        </template>
-        <template is="dom-if" if="{{collapse}}">
-            <button type="" id="openBtn" on-tap="openPushes">展開</button>
-        </template>
-        <div id="pushForm">
         </div>
     </template>
+
+    <script>
+        (function(){
+            'use strict';
+
+
+            Polymer({
+
+                is: 'moe-push-list',
+
+                properties: {
+                    data: {
+                        type: Array,
+                        observer: "_dataChanged",
+                        value: function() {return []}
+                    },
+                    displayCounts: {
+                        type: Number,
+                        value: 8
+                    },
+                    collapse: {
+                        type: Boolean,
+                        value: true,
+                        reflectToAttribute: true
+                    },
+                    maxView: {
+                        type: Number,
+                        value: 8,
+                        observer: '_maxViewChanged'
+                    },
+                    isAdmin: {
+                        value: false
+                    }
+                },
+                expand: function() {
+                    this.maxView =  this.data.length;
+                },
+                _computePostInfo: function(id, date, time) {
+                    return '(' + id + ' ' + date + ' ' + time + ')';
+                },
+                _computeIdColor: function(color) {
+                    return 'background-color: ' + color + ';'
+                },
+                _dataChanged: function() {
+                    console.log(' data init')
+                },
+                change: function() {
+                    console.log('changed');
+                },
+                _maxViewChanged: function() {
+
+                },
+                _pushFilter: function(item) {
+                    console.log( this.data.length);
+                    return item.index > this.data.length - this.maxView;
+                }
+            });
+        })();
+    </script>
 </dom-module>
-<script>
-Polymer({
-
-    is: 'moe-push-list',
-
-    properties: {
-        displayCounts: {
-            type: Number,
-            value: 8
-        },
-        collapse: {
-            type: Boolean,
-            value: true,
-            reflectToAttribute: true
-        },
-        datas: {
-            type: Object,
-            observer: "_renderData"
-        },
-        renderedData: Object,
-        isAdmin: {
-            value: false
-        }
-    },
-    openPushes: function() {
-        this.renderedData = this.renderedData.concat(this.datas.slice(this.displayCounts + 1, this.datas.length));
-        this.collapse = false;
-    },
-    _computePostInfo: function(identity, date, time) {
-        return '(' + identity + ' ' + date + ' ' + time + ')';
-    },
-    _renderData: function(datas) {
-        var t = this;
-        var that = this.datas;
-        var counts = this.displayCounts;
-
-        function render() {
-            t.renderedData = that.slice(0, counts);
-            console.log('rendered');
-        }
-        render();
-    },
-    change: function() {
-        console.log('changed');
-    }
-});
-</script>

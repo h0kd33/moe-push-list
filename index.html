@@ -4,8 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="moe-push-list.html">
+    <style>
+        body {
+            background: rgb(255, 255, 238);
+        }
+    </style>
 </head>
 
 <body >
@@ -13,19 +18,39 @@
 </body>
 <script>
 // Inject Json Datas
-var t = document.querySelector('moe-push-list');
-var jsonGen, chtTextGen;
-
 
 function injectJson(e) {
-        jsonGen = e;
-        t.datas = e;
+    var sentences = e.sentences; // Array
+    var data = [];
+    for( var i = 0; i < sentences.length; i++ ) {
+        var obj = {
+            index: i,
+            text: sentences[i],
+            id: makeid(),
+            idColor: (function(){
+                var colors=['red','blue','orange','green','yellow','pink','purple' ];
+                return colors[parseInt(Math.random()*colors.length)];
+            })(),
+            date: '00/00/00',
+            time: '00:00:00'
+        };
+        data.push(obj);
     }
-    (function loadJson() {
-        var script = document.createElement('script');
-        script.src = 'http://beta.json-generator.com/api/json/get/Fmn_rUq?callback=injectJson';
-        document.body.appendChild(script);
-    })();
+    document.querySelector('moe-push-list').data = data;
+}
+function makeid()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for( var i=0; i < 8; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+}
+(function loadJson() {
+    var script = document.createElement('script');
+    script.src = 'http://more.handlino.com/sentences.json?callback=injectJson&n=25&limit=3,40&';
+    document.body.appendChild(script);
+})();
 
 // 廢文產生器... 會error
 

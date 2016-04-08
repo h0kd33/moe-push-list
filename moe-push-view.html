@@ -1,0 +1,141 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="bower_components/paper-styles/shadow.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="bower_components/neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="bower_components/neon-animation/animations/fade-out-animation.html">
+
+<link rel="import" href="moe-push-list.html">
+
+<dom-module id="moe-push-view">
+    <template>
+        <style include="iron-flex iron-flex-alignment iron-positioning">
+            :host {
+                @apply(--layout-vertical);
+                @apply(--layout-fixed-right);
+                @apply(--shadow-elevation-16dp);
+
+                display: none;
+                max-width: 100vw;
+                background-color: white;
+            }
+            #container {
+                width: 100%;
+                height: 100%;
+            }
+            paper-icon-button.giant {
+                width: 40px;
+                height: 40px;
+                background-color: var(--paper-light-green-500);
+                color: white;
+                border-radius: 23px;
+            }
+        </style>
+        <div id="container" class="layout vertical flex" on-track="_handleTrack">
+            <div id="scroller" class="layout vertical flex scroll">
+                <moe-push-list id="pushList" data="[[data]]" max-view="{{data.length}}"></moe-push-list>
+            </div>
+            <div class="layout horizontal center">
+                <paper-input class="flex" value="{{inputtingData::input}}"></paper-input>
+                <paper-icon-button class="giant" icon="icons:send" on-tap="pushText"></paper-icon-button>
+            </div>
+        </div>
+    </template>
+    <script>
+        (function() {
+            'use strict';
+
+            Polymer({
+
+                is: 'moe-push-view',
+                behaviors: [
+                    Polymer.NeonAnimationRunnerBehavior
+                ],
+                properties: {
+                    data: {
+                        type: Array,
+                        value: function() { return []; },
+                        observer: '_dataChanged'
+                    },
+                    opened: {
+                        type: Boolean
+                    },
+                    animationConfig: {
+                        value: function() {
+                            return {
+                                'entry': {
+                                    // provided by neon-animation/animations/scale-up-animation.html
+                                    name: 'slide-from-right-animation',
+                                    node: this
+                                },
+                                'exit': {
+                                    // provided by neon-animation/animations/fade-out-animation.html
+                                    name: 'fade-out-animation',
+                                    node: this
+                                }
+                            }
+                        }
+                    },
+                    inputtingData: String
+                },
+                listeners: {
+                    'neon-animation-finish': '_onNeonAnimationFinish'
+                },
+                show: function() {
+                    this.opened = true;
+                    this.style.display = 'inline-block';
+                    // run scale-up-animation
+                    this.playAnimation('entry');
+                },
+                hide: function() {
+                    this.opened = false;
+                    // run fade-out-animation
+                    this.playAnimation('exit');
+                },
+                pushText: function() {
+                    var index = this.data[this.data.length -1].index;
+                    var push = {
+                        index: index + 1,
+                        id: '#######',
+                        text: this.inputtingData,
+                        time: '00:00:00',
+                        date: '00/00/00'
+                    };
+                    this.push( 'data' , push );
+                    this.$.scroller.scrollTop =  this.$.pushList.offsetHeight;
+                },
+                _dataChanged: function(e) {
+                },
+                _handleTrack: function(e) {
+
+                    var state = e.detail.state;
+                    var dx = e.detail.dx;
+                    var dy = e.detail.dy;
+                    switch(true) {
+                        case( state === 'start' ):
+                            break;
+                        case( state === 'track'):
+                            break;
+                        case( state === 'end' && dx > 120 ):
+                            this.hide();
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                _onNeonAnimationFinish: function() {
+                    if (!this.opened) {
+                        this.style.display = 'none';
+                    }
+                }
+            });
+
+        })();
+    </script>
+</dom-module>
