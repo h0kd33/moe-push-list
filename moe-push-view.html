@@ -2,6 +2,7 @@
 <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="bower_components/iron-a11y-keys/iron-a11y-keys.html">
 
 <link rel="import" href="bower_components/paper-styles/shadow.html">
 <link rel="import" href="bower_components/paper-input/paper-input.html">
@@ -22,13 +23,15 @@
                 @apply(--shadow-elevation-16dp);
 
                 display: none;
-                max-width: 100vw;
+                max-width: 95vw;
                 background-color: white;
             }
+
             #container {
                 width: 100%;
                 height: 100%;
             }
+
             paper-icon-button.giant {
                 width: 40px;
                 height: 40px;
@@ -36,19 +39,29 @@
                 color: white;
                 border-radius: 23px;
             }
+
+            #input {
+                padding: 5px 10px;
+            }
         </style>
+
+        <iron-a11y-keys id="a11y"
+                        target="[[_enterTarget]]"
+                        keys="enter"
+                        on-keys-pressed="pushText">
+        </iron-a11y-keys>
         <div id="container" class="layout vertical flex" on-track="_handleTrack">
             <div id="scroller" class="layout vertical flex scroll">
                 <moe-push-list id="pushList" data="[[data]]" max-view="{{data.length}}"></moe-push-list>
             </div>
-            <div class="layout horizontal center">
-                <paper-input class="flex" value="{{inputtingData::input}}"></paper-input>
+            <div id="input" class="layout horizontal center">
+                <paper-input label="輸入推文" char-counter maxlength="30" class="flex" value="{{inputtingData::input}}"></paper-input>
                 <paper-icon-button class="giant" icon="icons:send" on-tap="pushText"></paper-icon-button>
             </div>
         </div>
     </template>
     <script>
-        (function() {
+        (function () {
             'use strict';
 
             Polymer({
@@ -60,14 +73,16 @@
                 properties: {
                     data: {
                         type: Array,
-                        value: function() { return []; },
+                        value: function () {
+                            return [];
+                        },
                         observer: '_dataChanged'
                     },
                     opened: {
                         type: Boolean
                     },
                     animationConfig: {
-                        value: function() {
+                        value: function () {
                             return {
                                 'entry': {
                                     // provided by neon-animation/animations/scale-up-animation.html
@@ -82,24 +97,31 @@
                             }
                         }
                     },
-                    inputtingData: String
+                    inputtingData: String,
+                    _enterTarget: {
+                        type: Object,
+                        value: function() {
+                            return this.$.input;
+                        }
+                    }
                 },
                 listeners: {
                     'neon-animation-finish': '_onNeonAnimationFinish'
                 },
-                show: function() {
+                show: function () {
                     this.opened = true;
                     this.style.display = 'inline-block';
                     // run scale-up-animation
                     this.playAnimation('entry');
                 },
-                hide: function() {
+                hide: function () {
                     this.opened = false;
                     // run fade-out-animation
                     this.playAnimation('exit');
                 },
-                pushText: function() {
-                    var index = this.data[this.data.length -1].index;
+                pushText: function () {
+                    if (this.inputtingData.trim() === '') return;
+                    var index = this.data[this.data.length - 1].index;
                     var push = {
                         index: index + 1,
                         id: '#######',
@@ -107,17 +129,18 @@
                         time: '00:00:00',
                         date: '00/00/00'
                     };
-                    this.push( 'data' , push );
-                    this.$.scroller.scrollTop =  this.$.pushList.offsetHeight;
+                    this.push('data', push);
+                    this.inputtingData = '';
+                    this.$.scroller.scrollTop = this.$.pushList.offsetHeight;
                 },
-                _dataChanged: function(e) {
+                _dataChanged: function (e) {
                 },
-                _handleTrack: function(e) {
+                _handleTrack: function (e) {
 
                     var state = e.detail.state;
                     var dx = e.detail.dx;
                     var dy = e.detail.dy;
-                    switch(true) {
+                    switch (true) {
                         case( state === 'start' ):
                             break;
                         case( state === 'track'):
@@ -129,7 +152,7 @@
                             break;
                     }
                 },
-                _onNeonAnimationFinish: function() {
+                _onNeonAnimationFinish: function () {
                     if (!this.opened) {
                         this.style.display = 'none';
                     }

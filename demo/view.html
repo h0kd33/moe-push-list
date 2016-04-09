@@ -17,20 +17,38 @@
 
 <body>
     <template is="dom-bind">
-        <moe-push-list data="[[data]]" on-tap="_handleTap"></moe-push-list>
-        <moe-push-view data="{{data}}"></moe-push-view>
+        <moe-push-list id="push1" data="{{data1}}" on-tap="_handleTap"></moe-push-list>
+        <moe-push-list id="push2" data="{{data2}}" on-tap="_handleTap"></moe-push-list>
+        <moe-push-view id="view" data="{{data}}"></moe-push-view>
     </template>
 </body>
 <script>
-    document.querySelector('[is="dom-bind"]')._handleTap = function () {
-        console.log('click');
-        document.querySelector('moe-push-view').show();
+
+    document.querySelector('[is="dom-bind"]')._handleTap = function (e) {
+        // this = template[dom-bind]
+
+        /** TODO: 不知道怎麼設定　動態的 two-way-binding　target
+         *
+         *  觸發 on-tap event　後 可以用 Polymer.dom(e).localTarget 去得到 #push1 or #push2
+         *  可以單向輸入 #push1[data] 的資料 到 #view[data] 裡面
+         *  但是更改 #view[data] 後不知道怎麼反映回去 #push1[data]
+         *
+         * **/
+
+        // this.data =  Polymer.dom(e).localTarget.data;
+        this.set('data', Polymer.dom(e).localTarget.data);
+        view.show();
     };
 
-    // Inject Json Datas
-    function injectJson(e) {
-        var sentences = e.sentences; // Array
-        var data = [];
+
+
+
+    /** Inject Json Datas **/
+
+    function injectJson(json) {
+        var sentences = json.sentences; // Array
+        var data1 = [];
+        var data2 = [];
         for( var i = 0; i < sentences.length; i++ ) {
             var obj = {
                 index: i,
@@ -43,10 +61,12 @@
                 date: '00/00/00',
                 time: '00:00:00'
             };
-            data.push(obj);
+            if( i < 55 ) { data1.push(obj); continue; }
+            obj.index = obj.index - 55;
+            if( i >= 55 ){ data2.push(obj) }
         }
-        document.querySelector('moe-push-list').data = data;
-        document.querySelector('moe-push-view').data = data;
+        document.querySelector('[is="dom-bind"]').data1 = data1;
+        document.querySelector('[is="dom-bind"]').data2 = data2;
     }
     function makeid()
     {
@@ -58,7 +78,7 @@
     }
     (function loadJson() {
         var script = document.createElement('script');
-        script.src = 'http://more.handlino.com/sentences.json?callback=injectJson&n=55&limit=3,40&';
+        script.src = 'http://more.handlino.com/sentences.json?callback=injectJson&n=80&limit=3,40&';
         document.body.appendChild(script);
     })();
 
