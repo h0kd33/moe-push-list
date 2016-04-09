@@ -26,6 +26,7 @@
 
     document.querySelector('[is="dom-bind"]')._handleTap = function (e) {
         // this = template[dom-bind]
+        var view = document.querySelector('moe-push-view');
 
         /** TODO: 不知道怎麼設定　動態的 two-way-binding　target
          *
