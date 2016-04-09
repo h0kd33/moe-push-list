@@ -86,8 +86,8 @@
                     </template>
                 </div>
             </template>
-            <template is="dom-if" if="{{collapse}}">
-                <button type="" id="openBtn" on-tap="expand">展開</button>
+            <template is="dom-if" if="{{!expand}}">
+                <button type="" id="openBtn">閱讀全部({{aboutPush.length}})</button>
             </template>
             <div id="pushForm">
             </div>
@@ -109,13 +109,16 @@
                         observer: "_dataChanged",
                         value: function() {return []}
                     },
+                    aboutPush: {
+
+                    },
                     displayCounts: {
                         type: Number,
                         value: 8
                     },
-                    collapse: {
+                    expand: {
                         type: Boolean,
-                        value: true,
+                        value: false,
                         reflectToAttribute: true
                     },
                     maxView: {
@@ -128,7 +131,8 @@
                     }
                 },
                 expand: function() {
-//                    this.maxView =  this.data.length;
+                    this.toggleAttribute( 'expand', true );
+                    _pushFilter(null);
                 },
                 _computePostInfo: function(id, date, time) {
                     return '(' + id + ' ' + date + ' ' + time + ')';
@@ -137,15 +141,13 @@
                     return 'background-color: ' + color + ';'
                 },
                 _dataChanged: function() {
-                    console.log(' data init')
-                },
-                change: function() {
-                    console.log('changed');
+                    console.log(' data initialized ')
                 },
                 _maxViewChanged: function() {
 
                 },
                 _pushFilter: function(item) {
+                    if(item === null) return null;
                     console.log( this.data.length);
                     return item.index > this.data.length - this.maxView;
                 }

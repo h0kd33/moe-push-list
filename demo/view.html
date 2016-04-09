@@ -17,8 +17,11 @@
 
 <body>
     <template is="dom-bind">
+        <!-- Push 1 -->
         <moe-push-list id="push1" data="{{data1}}" on-tap="_handleTap"></moe-push-list>
+        <!-- Push 2 -->
         <moe-push-list id="push2" data="{{data2}}" on-tap="_handleTap"></moe-push-list>
+        <!-- Viewer -->
         <moe-push-view id="view" data="{{data}}"></moe-push-view>
     </template>
 </body>
@@ -30,13 +33,16 @@
 
         /** TODO: 不知道怎麼設定　動態的 two-way-binding　target
          *
+         *  *** 資料處理的問題暫時擱置 ***
+         *
          *  觸發 on-tap event　後 可以用 Polymer.dom(e).localTarget 去得到 #push1 or #push2
+         *
          *  可以單向輸入 #push1[data] 的資料 到 #view[data] 裡面
          *  但是更改 #view[data] 後不知道怎麼反映回去 #push1[data]
          *
          *  可能相關的文章:
          *      https://github.com/Polymer/polymer/issues/1778
-         *
+         *      http://stackoverflow.com/questions/33925726/referencing-binding-annotations-dynamically-in-polymer-1
          * **/
 
         // this.data =  Polymer.dom(e).localTarget.data;
@@ -44,10 +50,11 @@
         view.show();
     };
 
-
-
-
-    /** Inject Json Datas **/
+    /**
+     *
+     * Inject Json Datas
+     *
+     * **/
 
     function injectJson(json) {
         var sentences = json.sentences; // Array
@@ -71,6 +78,7 @@
         }
         document.querySelector('[is="dom-bind"]').data1 = data1;
         document.querySelector('[is="dom-bind"]').data2 = data2;
+        document.querySelector('#push1').click();
     }
     function makeid()
     {

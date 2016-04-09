@@ -5,6 +5,7 @@
 <link rel="import" href="bower_components/iron-a11y-keys/iron-a11y-keys.html">
 
 <link rel="import" href="bower_components/paper-styles/shadow.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
 <link rel="import" href="bower_components/paper-input/paper-input.html">
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
 
@@ -13,6 +14,7 @@
 <link rel="import" href="bower_components/neon-animation/animations/fade-out-animation.html">
 
 <link rel="import" href="moe-push-list.html">
+<link rel="import" href="moe-emoji-selector.html">
 
 <dom-module id="moe-push-view">
     <template>
@@ -32,6 +34,23 @@
                 height: 100%;
             }
 
+            #closeBar {
+                cursor: pointer;
+                width: 18px;
+            }
+            #closeBar:hover {
+                background-color: #EFEFEF;
+            }
+            #closeBar iron-icon {
+                --iron-icon-width: 18px;
+                --iron-icon-height: 18px;
+                --iron-icon-fill-color: #AAA;
+            }
+
+
+            /**
+            *   Input
+            */
             paper-icon-button.giant {
                 width: 40px;
                 height: 40px;
@@ -41,8 +60,22 @@
             }
 
             #input {
-                padding: 5px 10px;
+                padding: 5px 10px 5px 0;
             }
+            #emojiSelectBtn{
+                --paper-button: {
+                    padding: 1em 0.3em ;
+                    height: auto;
+                    min-width: auto;
+                }
+            }
+            #emojiSelector {
+                position: absolute;
+                bottom: 72px;
+                left: 0;
+                right: 0;
+            }
+
         </style>
 
         <iron-a11y-keys id="a11y"
@@ -50,15 +83,24 @@
                         keys="enter"
                         on-keys-pressed="pushText">
         </iron-a11y-keys>
-        <div id="container" class="layout vertical flex" on-track="_handleTrack">
-            <div id="scroller" class="layout vertical flex scroll">
-                <moe-push-list id="pushList" data="[[data]]" max-view="{{data.length}}"></moe-push-list>
+
+        <div id="container" class="layout horizontal flex" on-track="_handleTrack">
+            <div id="closeBar" class="layout vertical center" on-tap="hide">
+                <iron-icon icon="icons:chevron-right" class="flex"></iron-icon>
             </div>
-            <div id="input" class="layout horizontal center">
-                <paper-input label="輸入推文" char-counter maxlength="30" class="flex" value="{{inputtingData::input}}"></paper-input>
-                <paper-icon-button class="giant" icon="icons:send" on-tap="pushText"></paper-icon-button>
+            <div class="layout vertical flex">
+                <div id="scroller" class="layout vertical flex scroll">
+                    <moe-push-list expand id="pushList" data="[[data]]" max-view="{{data.length}}"></moe-push-list>
+                </div>
+                <div id="input" class="layout horizontal center relative">
+                    <paper-button id="emojiSelectBtn" on-tap="_showEmojiSelector">{{selectedEmoji}}</paper-button>
+                    <moe-emoji-selector id="emojiSelector" selected-emoji="{{selectedEmoji}}" hidden$="[[_emojiSelectorHide]]"></moe-emoji-selector>
+                    <paper-input label="輸入推文" char-counter maxlength="60" class="flex" value="{{inputtingData::input}}"></paper-input>
+                    <paper-icon-button class="giant" icon="icons:send" on-tap="pushText"></paper-icon-button>
+                </div>
             </div>
         </div>
+
     </template>
     <script>
         (function () {
@@ -98,6 +140,16 @@
                         }
                     },
                     inputtingData: String,
+
+                    selectedEmoji: {
+                        type: String,
+                        value: '(^O^)'
+                    },
+
+                    _emojiSelectorHide: {
+                        type: Boolean,
+                        value: true
+                    },
                     _enterTarget: {
                         type: Object,
                         value: function() {
@@ -136,7 +188,7 @@
                 _dataChanged: function (e) {
                 },
                 _handleTrack: function (e) {
-
+                    if('ontouchstart'in window === false) return;
                     var state = e.detail.state;
                     var dx = e.detail.dx;
                     var dy = e.detail.dy;
@@ -156,6 +208,9 @@
                     if (!this.opened) {
                         this.style.display = 'none';
                     }
+                },
+                _showEmojiSelector: function() {
+                    this._emojiSelectorHide = this._emojiSelectorHide ? false : true ;
                 }
             });
 
