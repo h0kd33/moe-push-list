@@ -11,23 +11,41 @@
 <dom-module id="moe-emoji-selector">
     <template>
         <style include="iron-flex iron-flex-alignment iron-positioning">
+            @import url(http://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
+
+            @font-face {
+                font-family: 'Noto Sans Japanese';
+                font-style: normal;
+                font-weight: 300;
+                src: local('NotoSansJP-Regular.otf'),
+                url(//fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.woff2) format('woff2'),
+                url(//fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.woff) format('woff'),
+                url(//fonts.gstatic.com/ea/notosansjapanese/v6/NotoSansJP-Regular.otf) format('opentype');
+            }
 
             :host {
-                font-family: 'MS Gothic', sans-serif;
                 display: table;
-                background-color: #CCC;
+                background-color: white;
                 -webkit-user-select: none;
                 -moz-user-select: none;
                 -p-user-select: none;
                 user-select: none;
-
+                font-size: 14px;
+                border: 1px solid #ccc;
+                font-family: 'Noto Sans Japanese', 'MS Gothic', Verdana, Roboto, 'Droid Sans', sans-serif;
+                font-weight: 500;
             }
 
             #container {
                 width: 300px;
                 height: 200px;
             }
-
+            #tabs {
+                --paper-tabs-selection-bar-color: #57acff;
+                --paper-tabs: {
+                    background-color:  #f0d5b7;
+                }
+            }
             #pages > section {
                 @apply(--layout-vertical);
                 @apply(--layout-scroll);
@@ -53,7 +71,7 @@
             }
         </style>
         <div id="container" class="layout vertical flex" >
-            <paper-tabs id="tabs" selected="{{selected}}">
+            <paper-tabs id="tabs" selected="{{selected}}" role="tab">
                 <paper-tab>（ ﾟ∀ﾟ ）</paper-tab>
                 <paper-tab>(#･∀･)</paper-tab>
                 <paper-tab>(^O^)</paper-tab>
@@ -61,7 +79,7 @@
                 <paper-tab>(´；ω；｀)</paper-tab>
                 <paper-tab>ヽ(`Д´)ﾉ</paper-tab>
             </paper-tabs>
-            <iron-pages id="pages" selected="{{selected}}" autoselect class="layout vertical flex relative" on-track="_handleTrack">
+            <iron-pages id="pages" selected="{{selected}}" autoselect class="layout vertical flex relative" on-track="_handleTrack" role="tabpanel">
                 <section>
                     <iron-selector class="emoji-selector" attr-for-selected="name" selected="{{selectedEmoji}}">
                         <div class="emoji" name="(￣▽￣)ノ"></div>

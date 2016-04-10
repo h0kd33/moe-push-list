@@ -25,11 +25,12 @@
                 @apply(--shadow-elevation-16dp);
 
                 display: none;
-                max-width: 95vw;
+                max-width: 97vw;
                 background-color: white;
             }
 
             #container {
+                max-width: 650px;
                 width: 100%;
                 height: 100%;
             }
@@ -39,6 +40,9 @@
                 width: 18px;
             }
             #closeBar:hover {
+                background-color: #F8F8F8;
+            }
+            #closeBar:active {
                 background-color: #EFEFEF;
             }
             #closeBar iron-icon {
@@ -67,6 +71,7 @@
                     padding: 1em 0.3em ;
                     height: auto;
                     min-width: auto;
+                    font-size: 13px;
                 }
             }
             #emojiSelector {
@@ -74,6 +79,14 @@
                 bottom: 72px;
                 left: 0;
                 right: 0;
+            }
+            .unselectable {
+                -moz-user-select: none;
+                -ms-user-select: none;
+                -webkit-user-select: none;
+                -webkit-touch-callout: none;
+                user-select: none;
+                -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
             }
 
         </style>
@@ -85,13 +98,15 @@
         </iron-a11y-keys>
 
         <div id="container" class="layout horizontal flex" on-track="_handleTrack">
-            <div id="closeBar" class="layout vertical center" on-tap="hide">
+            <div id="closeBar" class="layout vertical center unselectable" on-tap="hide">
                 <iron-icon icon="icons:chevron-right" class="flex"></iron-icon>
             </div>
             <div class="layout vertical flex">
+                <!-- 閱讀區 -->
                 <div id="scroller" class="layout vertical flex scroll">
                     <moe-push-list expand id="pushList" data="[[data]]" max-view="{{data.length}}"></moe-push-list>
                 </div>
+                <!--　輸入區　-->
                 <div id="input" class="layout horizontal center relative">
                     <paper-button id="emojiSelectBtn" on-tap="_showEmojiSelector">{{selectedEmoji}}</paper-button>
                     <moe-emoji-selector id="emojiSelector" selected-emoji="{{selectedEmoji}}" hidden$="[[_emojiSelectorHide]]"></moe-emoji-selector>
@@ -161,12 +176,14 @@
                     'neon-animation-finish': '_onNeonAnimationFinish'
                 },
                 show: function () {
+                    if(this.opened) return;
                     this.opened = true;
                     this.style.display = 'inline-block';
                     // run scale-up-animation
                     this.playAnimation('entry');
                 },
                 hide: function () {
+                    if(!this.opened) return;
                     this.opened = false;
                     // run fade-out-animation
                     this.playAnimation('exit');
@@ -188,7 +205,16 @@
                 _dataChanged: function (e) {
                 },
                 _handleTrack: function (e) {
-                    if('ontouchstart'in window === false) return;
+                    try {
+                        // 只能由　Touch event 觸發
+                        if( (navigator.maxTouchPoints === 0) ||
+                            (navigator.msMaxTouchPoints === 0)) error;
+                        // 開啟時能觸發
+                        if(this.opened === false)  error;
+                        // 確認 root 是 <moe-push-view>
+                        if(e.target.offsetParent.tagName !== 'MOE-PUSH-VIEW')  error;
+                    } catch (err){ return }
+
                     var state = e.detail.state;
                     var dx = e.detail.dx;
                     var dy = e.detail.dy;
@@ -197,7 +223,7 @@
                             break;
                         case( state === 'track'):
                             break;
-                        case( state === 'end' && dx > 120 ):
+                        case( state === 'end' && dx > 60 && dy < 60 && dy > -60 ):
                             this.hide();
                             break;
                         default:
@@ -206,8 +232,10 @@
                 },
                 _onNeonAnimationFinish: function () {
                     if (!this.opened) {
+                        this.opend = false;
                         this.style.display = 'none';
                     }
+                    this.opend = true;
                 },
                 _showEmojiSelector: function() {
                     this._emojiSelectorHide = this._emojiSelectorHide ? false : true ;

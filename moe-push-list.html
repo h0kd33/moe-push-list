@@ -70,8 +70,44 @@
             #openBtn {
                 width: 100%;
             }
+
+            /**
+            *   Media query
+            *  */
+
+            /* Smartphones (portrait and landscape) ----------- */
+            @media only screen
+            and (min-width : 320px)
+            and (max-width : 480px) {
+                /* Styles */
+            }
+
+            /* Smartphones (landscape) ----------- */
+            @media only screen
+            and (min-width : 321px) {
+                /* Styles */
+            }
+
+            /* Smartphones (portrait) ----------- */
+            @media only screen
+            and (max-width : 320px) {
+                /* Styles */
+                :host {
+                    font-size: 15px;
+                }
+            }
+
+            /* iPhone 4 ----------- */
+            @media
+            only screen and (-webkit-min-device-pixel-ratio : 1.5),
+            only screen and (min-device-pixel-ratio : 1.5) {
+                /* Styles */
+                :host {
+                    font-size: 15px;
+                }
+            }
         </style>
-        <div id="container">
+        <div id="container" role="marquee">
             <template id="pushRepeat" is="dom-repeat" items="[[data]]" as="item" observe="data" filter="_pushFilter">
                 <template is="dom-if" if="{{isAdmin}}">
                     <paper-checkbox id="checkbox"></paper-checkbox>
@@ -87,7 +123,7 @@
                 </div>
             </template>
             <template is="dom-if" if="{{!expand}}">
-                <button type="" id="openBtn">閱讀全部({{aboutPush.length}})</button>
+                <button type="" id="openBtn">閱讀全部({{pushesInfo.length}})</button>
             </template>
             <div id="pushForm">
             </div>
@@ -109,8 +145,14 @@
                         observer: "_dataChanged",
                         value: function() {return []}
                     },
-                    aboutPush: {
-
+                    pushesInfo: {
+                        type: Object,
+                        value: function() {
+                            return {
+                                id: 'id',
+                                length: 0
+                            }
+                        }
                     },
                     displayCounts: {
                         type: Number,
@@ -141,14 +183,15 @@
                     return 'background-color: ' + color + ';'
                 },
                 _dataChanged: function() {
-                    console.log(' data initialized ')
+                    if(this.data.length === 0 || this.data === undefined) return ;
+                    // mutation notification
+                    this.set( 'pushesInfo.length' , this.data.length);
                 },
                 _maxViewChanged: function() {
 
                 },
                 _pushFilter: function(item) {
                     if(item === null) return null;
-                    console.log( this.data.length);
                     return item.index > this.data.length - this.maxView;
                 }
             });
