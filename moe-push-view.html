@@ -11,6 +11,7 @@
 
 <link rel="import" href="bower_components/neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="bower_components/neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="bower_components/neon-animation/animations/slide-right-animation.html">
 <link rel="import" href="bower_components/neon-animation/animations/fade-out-animation.html">
 
 <link rel="import" href="moe-push-list.html">
@@ -22,7 +23,9 @@
             :host {
                 @apply(--layout-vertical);
                 @apply(--layout-fixed-right);
-                @apply(--shadow-elevation-16dp);
+
+                /** !! box-shadow cause android scroll bar position error  !! **/
+
 
                 display: none;
                 max-width: 97vw;
@@ -30,14 +33,28 @@
             }
 
             #container {
+                position: relative;
                 max-width: 650px;
-                width: 100%;
                 height: 100%;
             }
-
+            #container::before {
+                /* Tricks prevent shadow effect container scroller*/
+                content: '';
+                display: block;
+                position: absolute;
+                left: 30px;
+                top: 0;
+                bottom: 0;
+                height: 100%;
+                width: 30px;
+                box-shadow: -30px 0px 10px 10px rgba(0, 0, 0, 0.1);
+                transform: translate3d(0, 0, 0);
+                z-index: -1;
+            }
             #closeBar {
                 cursor: pointer;
                 width: 18px;
+                background: white;
             }
             #closeBar:hover {
                 background-color: #F8F8F8;
@@ -50,28 +67,54 @@
                 --iron-icon-height: 18px;
                 --iron-icon-fill-color: #AAA;
             }
-
+            /**
+            *  Push List
+            * */
+            #pushList {
+                --moe-push-list: {
+                    border-bottom: 15px solid #EEE;
+                    padding: 0
+                }
+            }
 
             /**
             *   Input
-            */
-            paper-icon-button.giant {
+            * */
+            #submitBtn {
                 width: 40px;
                 height: 40px;
-                background-color: var(--paper-light-green-500);
+                padding: 10px;
+                background-color: silver;
                 color: white;
                 border-radius: 23px;
             }
+            #submitBtn.inputting {
+                background-color: maroon;
+            }
 
             #input {
-                padding: 5px 10px 5px 0;
+                padding: 2px 5px 0px 0;
+                height: 70px;
+                border-top: 1px solid silver;
+                background-color: white;
+            }
+            #input > div{
+
+            }
+            #textInput {
+                --paper-input-container: {
+                    padding: 2px 5px 0px 0 ;
+                }
             }
             #emojiSelectBtn{
                 --paper-button: {
-                    padding: 1em 0.3em ;
-                    height: auto;
+                    border: 1px solid silver;
+                    padding: 3px 14px;
+                    height: 24px;
+                    overflow: hidden;
                     min-width: auto;
                     font-size: 13px;
+                    text-transform: none;
                 }
             }
             #emojiSelector {
@@ -94,24 +137,34 @@
         <iron-a11y-keys id="a11y"
                         target="[[_enterTarget]]"
                         keys="enter"
-                        on-keys-pressed="pushText">
+                        on-keys-pressed="submit">
         </iron-a11y-keys>
 
         <div id="container" class="layout horizontal flex" on-track="_handleTrack">
             <div id="closeBar" class="layout vertical center unselectable" on-tap="hide">
                 <iron-icon icon="icons:chevron-right" class="flex"></iron-icon>
             </div>
-            <div class="layout vertical flex">
+            <div class="layout vertical">
                 <!-- 閱讀區 -->
-                <div id="scroller" class="layout vertical flex scroll">
-                    <moe-push-list expand id="pushList" data="[[data]]" max-view="{{data.length}}"></moe-push-list>
-                </div>
+                <moe-push-list expand id="pushList" data="[[data]]" max-view="{{data.length}}" class="flex layout vertical scroll"></moe-push-list>
+
                 <!--　輸入區　-->
-                <div id="input" class="layout horizontal center relative">
-                    <paper-button id="emojiSelectBtn" on-tap="_showEmojiSelector">{{selectedEmoji}}</paper-button>
-                    <moe-emoji-selector id="emojiSelector" selected-emoji="{{selectedEmoji}}" hidden$="[[_emojiSelectorHide]]"></moe-emoji-selector>
-                    <paper-input label="輸入推文" char-counter maxlength="60" class="flex" value="{{inputtingData::input}}"></paper-input>
-                    <paper-icon-button class="giant" icon="icons:send" on-tap="pushText"></paper-icon-button>
+                <div id="input" class="layout horizontal relative">
+                    <div class="layout vertical flex">
+                        <div>
+                            <paper-button id="emojiSelectBtn" on-tap="_showEmojiSelector">{{selectedEmoji}}
+                            </paper-button>
+                            <moe-emoji-selector id="emojiSelector" selected-emoji="{{selectedEmoji}}"
+                                                hidden$="[[_emojiSelectorHide]]"></moe-emoji-selector>
+                        </div>
+                        <div>
+                            <paper-input id="textInput" label="輸入推文" char-counter maxlength="60" class="flex"
+                                         value="{{inputtingText::input}}" no-label-float></paper-input>
+                        </div>
+                    </div>
+                    <div class="layout vertical center-center">
+                        <paper-icon-button id="submitBtn" class$="{{_computeSubmitClass(inputtingText)}}" icon="icons:send" on-tap="submit"></paper-icon-button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -136,7 +189,8 @@
                         observer: '_dataChanged'
                     },
                     opened: {
-                        type: Boolean
+                        type: Boolean,
+                        value: false
                     },
                     animationConfig: {
                         value: function () {
@@ -146,16 +200,20 @@
                                     name: 'slide-from-right-animation',
                                     node: this
                                 },
-                                'exit': {
+                                'exit': [{
                                     // provided by neon-animation/animations/fade-out-animation.html
                                     name: 'fade-out-animation',
                                     node: this
-                                }
+                                },{
+                                    name: 'slide-right-animation',
+                                    node: this
+                                }]
                             }
                         }
                     },
-                    inputtingData: String,
-
+                    inputtingText: { 
+                        type: String
+                    },
                     selectedEmoji: {
                         type: String,
                         value: '(^O^)'
@@ -175,45 +233,65 @@
                 listeners: {
                     'neon-animation-finish': '_onNeonAnimationFinish'
                 },
+
+                /**
+                 * Public Method
+                 * */
                 show: function () {
                     if(this.opened) return;
-                    this.opened = true;
+                    this.toggleAttribute( 'opened', true );
                     this.style.display = 'inline-block';
                     // run scale-up-animation
+                    this.cancelAnimation();
                     this.playAnimation('entry');
                 },
                 hide: function () {
                     if(!this.opened) return;
-                    this.opened = false;
+                    this.toggleAttribute( 'opened', false );
                     // run fade-out-animation
+                    this.cancelAnimation();
                     this.playAnimation('exit');
                 },
-                pushText: function () {
-                    if (this.inputtingData.trim() === '') return;
+                submit: function () {
+                    // Input is empty => return
+                    if (this.inputtingText.trim() === '') return;
+                    // get index
                     var index = this.data[this.data.length - 1].index;
+                    // 推文內容
                     var push = {
                         index: index + 1,
                         id: '#######',
-                        text: this.inputtingData,
+                        text: this.inputtingText,
                         time: '00:00:00',
-                        date: '00/00/00'
+                        date: '00/00/00',
+                        emoji: this.selectedEmoji,
+                        emojiTail: '<'
                     };
                     this.push('data', push);
-                    this.inputtingData = '';
-                    this.$.scroller.scrollTop = this.$.pushList.offsetHeight;
+                    // claer input
+                    this.inputtingText = '';
+                    // scroll
+                    this.async( function() {
+                        this.$.pushList.scrollTop = 100 + this.$.pushList.$.container.offsetHeight;
+                    }, 100);
                 },
+
+                /**
+                 * Private Method
+                 * */
                 _dataChanged: function (e) {
                 },
                 _handleTrack: function (e) {
                     try {
                         // 只能由　Touch event 觸發
-                        if( (navigator.maxTouchPoints === 0) ||
-                            (navigator.msMaxTouchPoints === 0)) error;
+                        if(navigator.maxTouchPoints === 0 ) throw 'Not touch device';
+                        if(navigator.msMaxTouchPoints === 0) throw 'Not touch device';
                         // 開啟時能觸發
-                        if(this.opened === false)  error;
-                        // 確認 root 是 <moe-push-view>
-                        if(e.target.offsetParent.tagName !== 'MOE-PUSH-VIEW')  error;
-                    } catch (err){ return }
+                        if(this.opened === false) throw 'Viewer was closed';
+                        // 排除 <moe-emoji-selector>
+                        if(e.target.classList.contains('moe-emoji-selector')) throw 'Not trigger area';
+
+                    } catch (err){ console.log(err); return }
 
                     var state = e.detail.state;
                     var dx = e.detail.dx;
@@ -231,15 +309,23 @@
                     }
                 },
                 _onNeonAnimationFinish: function () {
-                    if (!this.opened) {
-                        this.opend = false;
-                        this.style.display = 'none';
+                    switch( this.opened ){
+                        case true:
+                            this.toggleAttribute( 'opened', true );
+                            break;
+                        case false:
+                            this.toggleAttribute( 'opened', false );
+                            this.style.display = 'none';
+                            break;
                     }
-                    this.opend = true;
                 },
                 _showEmojiSelector: function() {
                     this._emojiSelectorHide = this._emojiSelectorHide ? false : true ;
-                }
+                },
+                _computeSubmitClass: function(e) {
+                    if (this.inputtingText.trim() === '') return '';
+                    return 'inputting';
+                },
             });
 
         })();

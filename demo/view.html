@@ -17,6 +17,7 @@
 
 <body>
     <template is="dom-bind">
+
         <!-- Push 1 -->
         <moe-push-list id="push1" data="{{data1}}" on-tap="_handleTap"></moe-push-list>
         <!-- Push 2 -->
@@ -70,7 +71,9 @@
                     return colors[parseInt(Math.random()*colors.length)];
                 })(),
                 date: '00/00/00',
-                time: '00:00:00'
+                time: '00:00:00',
+                emoji: '(ﾟ∀ﾟ)',
+                emojiTail: '<'
             };
             if( i < 55 ) { data1.push(obj); continue; }
             obj.index = obj.index - 55;
