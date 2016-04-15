@@ -34,10 +34,12 @@
 
             #emoji {
                 font-family: 'MS Gothic', 'sans-serif';
+                white-space: nowrap;
             }
 
             #text {
-
+                /* ie flexbox bug fix*/
+                -ms-flex: 1 auto;
             }
 
             #idColor {
@@ -156,10 +158,6 @@
                             }
                         }
                     },
-                    displayCounts: {
-                        type: Number,
-                        value: 8
-                    },
                     expand: {
                         type: Boolean,
                         value: false,
@@ -186,6 +184,7 @@
                 },
                 _dataChanged: function () {
                     if (this.data.length === 0 || this.data === undefined) return;
+                    if (this.expand) this.maxView = this.data.length;
                     // mutation notification
                     this.set('pushesInfo.length', this.data.length);
                 },

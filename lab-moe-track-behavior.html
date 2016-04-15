@@ -1,0 +1,136 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+
+<script>
+    /**
+     * Functionless Building
+     * */
+    MoeTrackBehavior = {
+
+        properties: {
+            trackEventConfig: {
+                value: function() {
+                    return [
+                        // Event 0
+                        {
+                            node: this.$.element0,
+                            action: 'swipe',
+                            config: {
+
+                            }
+                        },
+                        // Event 1
+                        {
+                            node: this.$.element1,
+                            action: 'left-swipe',
+                            config: {
+
+                            }
+                        },
+                        // Event 2
+                        {
+                            node: this.$.element2,
+                            action: 'left-edge-swipe',
+                            config: {
+
+                            }
+                        }
+                    ]
+                }
+            }
+
+        },
+
+        listeners: {
+
+        },
+
+        created: function() {
+            console.log('Highlighting for ', this, 'enabled!');
+        },
+
+        _handleTrack: function(e, node, action, config) {
+            try {
+                if(!node) throw 'Need select node';
+                if(!action) throw 'Need action type';
+            } catch(err) {
+                console.log(err);
+            }
+
+            var state = e.detail.state;
+
+            var x = e.detail.x;
+            var y = e.detail.y;
+            var dx = e.detail.dx;
+            var dy = e.detail.dy;
+
+            var startX = x - dx;
+            var startY = y - dy;
+
+
+
+            // Horizontal Trigger
+            var triggerLength = 60;
+            var edgeWidth = 30;
+
+            if( state === 'start') {
+                node.style.transition = '';
+                switch(true) {
+                    case ():
+                        break;
+                    case ():
+                        break;
+                    default:
+                }
+            }
+            if( state === 'track') {
+                switch(true) {
+                    case ():
+                            node.translate3d( dx + 'px', 0, 0);
+                        break;
+                    case ():
+                            node.translate3d( node.offsetWidth + dx + 'px', 0, 0);
+                        break;
+                    default:
+                }
+            }
+            if( state === 'end') {
+                node.style.transition = 'all 0.3s ease-out';
+                switch(true) {
+                    // Trigger
+                    case (dx >= triggerLength || dx <= -triggerLength):
+
+                        break;
+                    // without Trigger return previous state
+                    case (dx < triggerLength || dx > -triggerLength):
+
+                        break;
+                    default:
+                }
+            }
+        },
+
+        _iterator: function(e) {
+
+        },
+        /**
+         *  Action Definition
+         * */
+        _swipe: function(e) {
+            return {
+
+            }
+        },
+        _leftSwipe: function(e) {
+
+        },
+        _leftEdgeSwipe: function(e) {
+
+        },
+        /**
+         *  Private
+         * */
+        _isEdge: function(offset){
+
+        }
+    };
+</script>

@@ -34,7 +34,6 @@
 
             #container {
                 position: relative;
-                max-width: 650px;
                 height: 100%;
             }
             #container::before {
@@ -53,7 +52,7 @@
             }
             #closeBar {
                 cursor: pointer;
-                width: 18px;
+                min-width: 18px;
                 background: white;
             }
             #closeBar:hover {
@@ -71,6 +70,8 @@
             *  Push List
             * */
             #pushList {
+
+                max-width: 630px;
                 --moe-push-list: {
                     border-bottom: 15px solid #EEE;
                     padding: 0
@@ -131,7 +132,11 @@
                 user-select: none;
                 -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
             }
-
+            .fix {
+                /* ie flexbox bug fix*/
+                -ms-flex: 1 auto;
+                flex: 1 auto;
+            }
         </style>
 
         <iron-a11y-keys id="a11y"
@@ -140,7 +145,7 @@
                         on-keys-pressed="submit">
         </iron-a11y-keys>
 
-        <div id="container" class="layout horizontal flex" on-track="_handleTrack">
+        <div id="container" class="layout horizontal" on-track="_handleTrack">
             <div id="closeBar" class="layout vertical center unselectable" on-tap="hide">
                 <iron-icon icon="icons:chevron-right" class="flex"></iron-icon>
             </div>
@@ -192,6 +197,24 @@
                         type: Boolean,
                         value: false
                     },
+                    inputtingText: { 
+                        type: String
+                    },
+                    selectedEmoji: {
+                        type: String,
+                        value: '(^O^)'
+                    },
+
+                    _emojiSelectorHide: {
+                        type: Boolean,
+                        value: true
+                    },
+                    _enterTarget: {
+                        type: Object,
+                        value: function() {
+                            return this.$.input;
+                        }
+                    },
                     animationConfig: {
                         value: function () {
                             return {
@@ -209,24 +232,6 @@
                                     node: this
                                 }]
                             }
-                        }
-                    },
-                    inputtingText: { 
-                        type: String
-                    },
-                    selectedEmoji: {
-                        type: String,
-                        value: '(^O^)'
-                    },
-
-                    _emojiSelectorHide: {
-                        type: Boolean,
-                        value: true
-                    },
-                    _enterTarget: {
-                        type: Object,
-                        value: function() {
-                            return this.$.input;
                         }
                     }
                 },
