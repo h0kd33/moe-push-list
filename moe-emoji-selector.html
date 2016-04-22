@@ -84,7 +84,10 @@
                         on-track="_handleTrack" role="tabpanel">
                 <template is="dom-repeat" items="[[emojiData]]" as="item" on-dom-change="_appendEmoji">
                     <section>
-                        <iron-selector class='emoji-selector' attr-for-selected='data-emoji' selected='{{selectedEmoji}}'></iron-selector>
+                        <iron-selector class='emoji-selector'
+                                       attr-for-selected='data-emoji'
+                                       selected='{{selectedEmoji}}'>
+                        </iron-selector>
                     </section>
                 </template>
             </iron-pages>
@@ -146,14 +149,14 @@
                             break;
                     }
                 },
-                _appendEmoji: function(){
-                    if(this._emojiAppended) return;
-                    this.async(function(){
+                _appendEmoji: function () {
+                    if (this._emojiAppended) return;
+                    this.async(function () {
                         var targets = this.$.pages.children;
-                        for(var i = 0; i < this.emojiData.length; i++) {
+                        for (var i = 0; i < this.emojiData.length; i++) {
                             var emojis = this.emojiData[i].emojis;
                             var target = targets[i].querySelector('iron-selector');
-                            for( var j = 0; j < emojis.length; j++) {
+                            for (var j = 0; j < emojis.length; j++) {
                                 var div = document.createElement('div');
                                 div.setAttribute('data-emoji', emojis[j]);
                                 div.className = 'emoji';
@@ -166,15 +169,13 @@
                 },
                 _initialize: function () {
                     var pages = this.$.pages,
-                        emojis = this.$.emojis.emojiSet,
-                        tabs = this.$.tabs;
+                            emojis = this.$.emojis.emojiSet,
+                            tabs = this.$.tabs;
 
                     this.emojiData = emojis;
-
-                    for(var i = 0; i < this.emojiData.length; i++) {
+                    for (var i = 0; i < this.emojiData.length; i++) {
                         var tab = document.createElement('paper-tab');
                         tab.innerText = this.emojiData[i].emojis[0];
-
                         Polymer.dom(tabs).appendChild(tab);
                     }
                 },

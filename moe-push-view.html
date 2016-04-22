@@ -50,31 +50,22 @@
                 transform: translate3d(0, 0, 0);
                 z-index: -1;
             }
-            #closeBar {
-                cursor: pointer;
-                min-width: 18px;
-                background: white;
-            }
-            #closeBar:hover {
-                background-color: #F8F8F8;
-            }
-            #closeBar:active {
-                background-color: #EFEFEF;
-            }
-            #closeBar iron-icon {
-                --iron-icon-width: 18px;
-                --iron-icon-height: 18px;
-                --iron-icon-fill-color: #AAA;
+            #closeBtn {
+                position: absolute;
+                right: 100%;
+                top: 0;
+                color: silver;
+                background-color: rgba(255,255,255,1);
+                box-shadow: -5px 5px 15px 0px rgba(0, 0, 0, 0.1);
             }
             /**
             *  Push List
             * */
             #pushList {
-
                 max-width: 630px;
                 --moe-push-list: {
                     border-bottom: 15px solid #EEE;
-                    padding: 0
+                    padding: 0 0 0 5px;
                 }
             }
 
@@ -145,32 +136,29 @@
                         on-keys-pressed="submit">
         </iron-a11y-keys>
 
-        <div id="container" class="layout horizontal" on-track="_handleTrack">
-            <div id="closeBar" class="layout vertical center unselectable" on-tap="hide">
-                <iron-icon icon="icons:chevron-right" class="flex"></iron-icon>
-            </div>
-            <div class="layout vertical">
-                <!-- 閱讀區 -->
-                <moe-push-list expand id="pushList" data="[[data]]" max-view="{{data.length}}" class="flex layout vertical scroll"></moe-push-list>
+        <div id="container" class="layout vertical" on-track="_handleTrack">
+            <!-- 閱讀區 -->
+            <moe-push-list expand id="pushList" data="[[data]]" max-view="{{data.length}}" class="flex layout vertical scroll"></moe-push-list>
+            <paper-icon-button icon="icons:close" id="closeBtn" on-tap="hide"></paper-icon-button>
 
-                <!--　輸入區　-->
-                <div id="input" class="layout horizontal relative">
-                    <div class="layout vertical flex">
-                        <div>
-                            <paper-button id="emojiSelectBtn" on-tap="_showEmojiSelector">{{selectedEmoji}}
-                            </paper-button>
-                            <moe-emoji-selector id="emojiSelector" selected-emoji="{{selectedEmoji}}"
-                                                hidden$="[[_emojiSelectorHide]]"></moe-emoji-selector>
-                        </div>
-                        <div>
-                            <paper-input id="textInput" label="輸入推文" char-counter maxlength="60" class="flex"
-                                         value="{{inputtingText::input}}" no-label-float></paper-input>
-                        </div>
+            <!--　輸入區　-->
+            <div id="input" class="layout horizontal relative">
+                <div class="layout vertical flex">
+                    <div>
+                        <paper-button id="emojiSelectBtn" on-tap="_showEmojiSelector">{{selectedEmoji}}
+                        </paper-button>
+                        <moe-emoji-selector id="emojiSelector" selected-emoji="{{selectedEmoji}}"
+                                            hidden$="[[_emojiSelectorHide]]"></moe-emoji-selector>
                     </div>
-                    <div class="layout vertical center-center">
-                        <paper-icon-button id="submitBtn" class$="{{_computeSubmitClass(inputtingText)}}" icon="icons:send" on-tap="submit"></paper-icon-button>
+                    <div>
+                        <paper-input id="textInput" label="輸入推文" char-counter maxlength="60" class="flex"
+                                     value="{{inputtingText::input}}" no-label-float></paper-input>
                     </div>
                 </div>
+                <div class="layout vertical center-center">
+                    <paper-icon-button id="submitBtn" class$="{{_computeSubmitClass(inputtingText)}}" icon="icons:send" on-tap="submit"></paper-icon-button>
+                </div>
+
             </div>
         </div>
 
