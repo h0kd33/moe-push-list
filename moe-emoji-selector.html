@@ -79,12 +79,6 @@
         <moe-emoji id="emojis"></moe-emoji>
         <div id="container" class="layout vertical flex">
             <paper-tabs id="tabs" selected="{{selected}}" role="tab">
-                <paper-tab>（ ﾟ∀ﾟ ）</paper-tab>
-                <paper-tab>(#･∀･)</paper-tab>
-                <paper-tab>(^O^)</paper-tab>
-                <paper-tab>( ﾟдﾟ)ﾊｯ!</paper-tab>
-                <paper-tab>(´；ω；｀)</paper-tab>
-                <paper-tab>ヽ(`Д´)ﾉ</paper-tab>
             </paper-tabs>
             <iron-pages id="pages" selected="{{selected}}" autoselect class="layout vertical flex relative"
                         on-track="_handleTrack" role="tabpanel">
@@ -178,8 +172,9 @@
                     this.emojiData = emojis;
 
                     for(var i = 0; i < this.emojiData.length; i++) {
-                        var tab = document.createElement('div');
-                        tab.innderText = this.emojiData[i].emojis[0];
+                        var tab = document.createElement('paper-tab');
+                        tab.innerText = this.emojiData[i].emojis[0];
+
                         Polymer.dom(tabs).appendChild(tab);
                     }
                 },
