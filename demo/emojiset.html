@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../bower_components/polymer/polymer.html">
+    <link rel="import" href="../moe-emojiset.html">
+    <style>
+        body {
+            background: rgb(255, 255, 238);
+        }
+    </style>
+</head>
+
+<body>
+<script>
+    document.addEventListener('WebComponentsReady', function() {
+        var meta = new Polymer.IronMetaQuery({type:"MOE_EMOJIS"});
+        console.log("LIKE");
+        console.log(meta.byKey('like').toString());
+        console.log("DISLIKE");
+        console.log(meta.byKey('dislike').toString());
+    });
+</script>
+<moe-emojiset>
+    <div type="like">
+        (ﾟ∀ﾟ)
+        (・∀・)
+        (^ω^)",
+        (ノ・ω・)ノ
+        (ノﾟ∀ﾟ)ノ
+        (σﾟ∀ﾟ)σ
+        (ﾟ⊿ﾟ)
+        (・ω・)
+        (・ー・)
+        (ﾟωﾟ)
+        (`・ω・´)
+        (｀･ω･)
+        (oﾟωﾟo)
+        (｡◕∀◕｡)
+        (ﾟ∀。)
+        (*ﾟ∀ﾟ*)
+        (〃∀〃)
+        (ゝ∀･)
+        (・∀・)
+        (*ﾟ∇ﾟ)
+        (*´∀`)
+        (*´д`)
+        (*´ω`*)
+        (´∀`)
+        (`ー´)
+        (´ρ`)
+        (*ﾟーﾟ)
+        ヽ(●´∀`●)ﾉ
+        _へ__(‾◡◝ )>
+    </div>
+    <div type="dislike">
+        (・_ゝ・)
+        (´_ゝ`)
+        (´,_ゝ`)
+        (・_っ・)
+        (^_っ^)
+        (´ー`)
+        (ﾟ3ﾟ)
+        (σﾟдﾟ)σ
+        ヾ(´ε`ヾ)
+        (´・ω・`)
+        ･ﾟ(ﾉд`ﾟ)
+        。･ﾟ･(つд`ﾟ)･ﾟ･
+        (TдT)
+        (>д<;)
+        (-д-)
+        (´д`)
+        (;´д`)
+    </div>
+</moe-emojiset>
+</body>
+
+</html>

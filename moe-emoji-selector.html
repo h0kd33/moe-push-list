@@ -1,6 +1,7 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="bower_components/iron-meta/iron-meta.html">
 <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
 
@@ -8,7 +9,7 @@
 <link rel="import" href="bower_components/paper-input/paper-input.html">
 <link rel="import" href="bower_components/paper-styles/paper-styles.html">
 
-<link rel="import" href="moe-emoji.html">
+<link rel="import" href="emoji-basic.html">
 
 <dom-module id="moe-emoji-selector">
     <template>
@@ -76,13 +77,12 @@
                 background-color: white;
             }
         </style>
-        <moe-emoji id="emojis"></moe-emoji>
         <div id="container" class="layout vertical flex">
             <paper-tabs id="tabs" selected="{{selected}}" role="tab">
             </paper-tabs>
             <iron-pages id="pages" selected="{{selected}}" autoselect class="layout vertical flex relative"
                         on-track="_handleTrack" role="tabpanel">
-                <template is="dom-repeat" items="[[emojiData]]" as="item" on-dom-change="_appendEmoji">
+                <template is="dom-repeat" items="[[_emojiSet]]" as="item" on-dom-change="_appendEmoji">
                     <section>
                         <iron-selector class='emoji-selector'
                                        attr-for-selected='data-emoji'
@@ -110,6 +110,9 @@
                             return []
                         }
                     },
+                    emojis: {
+                        type: String
+                    },
                     selected: {
                         type: Number,
                         value: 0
@@ -118,13 +121,19 @@
                         type: String,
                         notify: true,
                         reflectToAttribute: true
+                    },
+                    _emojiSet: {
+                        type: Array,
+                        value: function() {
+                            return []
+                        }
                     }
-
                 },
                 _dataChanged: function () {
                     console.log(' data initialized ')
                 },
                 _handleTrack: function (e) {
+                    e.preventDefault();
                     var triggerRangeX = 60;
                     var triggerRangeY = 40;
                     var startX = e.detail.x - e.detail.dx;
@@ -135,7 +144,6 @@
                     var tabs = this.$.tabs;
 
                     switch (true) {
-
                         /* Drawer is Open */
                         case ( state === 'start' ):
                             break;
@@ -153,12 +161,13 @@
                     if (this._emojiAppended) return;
                     this.async(function () {
                         var targets = this.$.pages.children;
-                        for (var i = 0; i < this.emojiData.length; i++) {
-                            var emojis = this.emojiData[i].emojis;
+                        for (var i = 0; i < this._emojiSet.length; i++) {
+                            var emojis = this._emojiSet[i].emojis;
                             var target = targets[i].querySelector('iron-selector');
                             for (var j = 0; j < emojis.length; j++) {
                                 var div = document.createElement('div');
                                 div.setAttribute('data-emoji', emojis[j]);
+                                div.setAttribute('type', emojis.type);
                                 div.className = 'emoji';
                                 div.innerText = emojis[j];
                                 Polymer.dom(target).appendChild(div);
@@ -168,21 +177,32 @@
                     }, 1);
                 },
                 _initialize: function () {
+                    // cache selector
                     var pages = this.$.pages,
-                            emojis = this.$.emojis.emojiSet,
-                            tabs = this.$.tabs;
+                        tabs = this.$.tabs;
+                    // variable
+                    var emojisMeta  = new Polymer.IronMetaQuery({type:"MOE_EMOJIS"}),
+                        key = this.emojis.split(/[ ,]+/);
 
-                    this.emojiData = emojis;
-                    for (var i = 0; i < this.emojiData.length; i++) {
+                    // generate _emojiSet
+                    key.forEach((function(key){
+                        var obj = {
+                            emojis: emojisMeta.byKey(key),
+                            type: key
+                        };
+                        this._emojiSet.push(obj);
+                    }).bind(this));
+
+                    for (var i = 0; i < this._emojiSet.length; i++) {
                         var tab = document.createElement('paper-tab');
-                        tab.innerText = this.emojiData[i].emojis[0];
+                        tab.innerText = this._emojiSet[i].emojis[0];
                         Polymer.dom(tabs).appendChild(tab);
                     }
                 },
                 ready: function () {
                     this._initialize();
                 },
-                _emojiAppended: false
+                _emojiAppended: false,
             });
         })();
     </script>

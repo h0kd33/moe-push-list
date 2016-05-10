@@ -7,22 +7,17 @@
     <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../bower_components/polymer/polymer.html">
     <link rel="import" href="../emoji-basic.html">
-    <link rel="import" href="../emoji-anime.html">
-    <link rel="import" href="../moe-emoji-selector.html">
-    <style>
-        body {
-            background: rgb(255, 255, 238);
-        }
-    </style>
 </head>
-
 <body>
-<moe-emoji-selector emojis="like dislike surprise angry peep anime"></moe-emoji-selector>
+    <script>
+        document.addEventListener('WebComponentsReady', function() {
+            var meta = new Polymer.IronMetaQuery({type:"MOE_EMOJIS"});
+            console.log("LIKE");
+            console.log(meta.byKey('like').toString());
+            console.log("DISLIKE");
+            console.log(meta.byKey('dislike').toString());
+        });
+    </script>
 </body>
-<script>
-
-
-
-</script>
 
 </html>
