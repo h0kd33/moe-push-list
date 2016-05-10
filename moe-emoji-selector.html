@@ -190,7 +190,12 @@
                             emojis: emojisMeta.byKey(key),
                             type: key
                         };
-                        this._emojiSet.push(obj);
+                        if(typeof(obj.emojis) !== 'undefined' ) {
+                            this._emojiSet.push(obj);
+                            return
+                        };
+                        // if meta has no emoijs throw err msg
+                        console.log( 'Emoji "' + key + '" not exist.');
                     }).bind(this));
 
                     for (var i = 0; i < this._emojiSet.length; i++) {
