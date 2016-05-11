@@ -21,6 +21,7 @@
 <link rel="import" href="moe-push-list.html">
 <link rel="import" href="emoji-basic.html">
 <link rel="import" href="emoji-anime.html">
+<link rel="import" href="emoji-tail.html">
 <link rel="import" href="moe-emoji-selector.html">
 
 <!--
@@ -40,7 +41,6 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
 
                 /** !! box-shadow cause android scroll bar position error  !! **/
 
-
                 display: none;
                 max-width: 97vw;
                 background-color: white;
@@ -50,6 +50,7 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                 position: relative;
                 height: 100%;
             }
+
             #container::before {
                 /* Tricks prevent shadow effect container scroller*/
                 content: '';
@@ -64,15 +65,17 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                 transform: translate3d(0, 0, 0);
                 z-index: -1;
             }
+
             #closeBtn {
                 position: absolute;
                 right: 100%;
                 top: 0;
                 color: silver;
-                background-color: rgba(255,255,255,1);
+                background-color: rgba(255, 255, 255, 1);
                 box-shadow: -5px 5px 15px 0px rgba(0, 0, 0, 0.1);
                 padding: 3px;
             }
+
             /**
             *  Push List
             * */
@@ -96,6 +99,7 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                 color: white;
                 border-radius: 23px;
             }
+
             #submitBtn.inputting {
                 background-color: maroon;
             }
@@ -106,18 +110,22 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                 border-top: 1px solid silver;
                 background-color: white;
             }
-            #input > div{
+
+            #input > div {
 
             }
+
             #textInput {
                 --paper-input-container: {
-                    padding: 2px 5px 0px 0 ;
+                    padding: 2px 5px 0px 0;
                 }
             }
-            #emojiSelectBtn{
+
+            #emojiSelectBtn, #tailSelectBtn {
                 --paper-button: {
                     border: 1px solid silver;
                     padding: 3px 14px;
+                    margin: auto 0px auto 5px;
                     height: 24px;
                     overflow: hidden;
                     min-width: auto;
@@ -125,20 +133,23 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                     text-transform: none;
                 }
             }
-            #emojiSelector {
+
+            #emojiSelector, #tailSelector {
                 position: absolute;
                 bottom: 72px;
                 left: 0;
                 right: 0;
             }
+
             .unselectable {
                 -moz-user-select: none;
                 -ms-user-select: none;
                 -webkit-user-select: none;
                 -webkit-touch-callout: none;
                 user-select: none;
-                -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
             }
+
             .fix {
                 /* ie flexbox bug fix*/
                 -ms-flex: 1 auto;
@@ -154,17 +165,24 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
 
         <div id="container" class="layout vertical" on-track="_handleTrack">
             <!-- 閱讀區 -->
-            <moe-push-list expand id="pushList" data="[[data]]" max-view="{{data.length}}" class="flex layout vertical scroll"></moe-push-list>
+            <moe-push-list expand id="pushList" data="[[data]]" max-view="{{data.length}}"
+                           class="flex layout vertical scroll"></moe-push-list>
             <paper-icon-button icon="icons:close" id="closeBtn" on-tap="hide"></paper-icon-button>
 
             <!--　輸入區　-->
             <div id="input" class="layout horizontal relative">
                 <div class="layout vertical flex">
                     <div>
-                        <paper-button id="emojiSelectBtn" on-tap="_showEmojiSelector">{{selectedEmoji}}
+                        <paper-button id="emojiSelectBtn" on-tap="_toggleEmojiSelector">{{selectedEmoji}}
                         </paper-button>
-                        <moe-emoji-selector id="emojiSelector"  emojis="like dislike surprise angry peep anime" selected-emoji="{{selectedEmoji}}"
+                        <paper-button id="tailSelectBtn" on-tap="_toggleTailSelector">{{selectedTail}}
+                        </paper-button>
+                        <moe-emoji-selector id="emojiSelector" emojis="like dislike surprise angry peep anime"
+                                            selected-emoji="{{selectedEmoji}}"
                                             hidden$="[[_emojiSelectorHide]]"></moe-emoji-selector>
+                        <moe-emoji-selector id="tailSelector" emojis="tail"
+                                            selected-emoji="{{selectedTail}}"
+                                            hidden$="[[_tailSelectorHide]]"></moe-emoji-selector>
                     </div>
                     <div>
                         <paper-input id="textInput" label="輸入推文" char-counter maxlength="60" class="flex"
@@ -172,7 +190,8 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                     </div>
                 </div>
                 <div class="layout vertical center-center">
-                    <paper-icon-button id="submitBtn" class$="{{_computeSubmitClass(inputtingText)}}" icon="icons:send" on-tap="submit"></paper-icon-button>
+                    <paper-icon-button id="submitBtn" class$="{{_computeSubmitClass(inputtingText)}}" icon="icons:send"
+                                       on-tap="submit"></paper-icon-button>
                 </div>
 
             </div>
@@ -210,7 +229,7 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                     /**
                      *  暫存輸入中的推文
                      * */
-                    inputtingText: { 
+                    inputtingText: {
                         type: String
                     },
                     /**
@@ -218,15 +237,25 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                      * */
                     selectedEmoji: {
                         type: String,
-                        value: '(^O^)'
+                        value: '(^O^)',
+                        observer: '_handleSelectEmoji'
+                    },
+                    selectedTail: {
+                        type: String,
+                        value: ':<',
+                        observer: '_handleSelectTail'
                     },
                     _emojiSelectorHide: {
                         type: Boolean,
                         value: true
                     },
+                    _tailSelectorHide: {
+                        type: Boolean,
+                        value: true
+                    },
                     _enterTarget: {
                         type: Object,
-                        value: function() {
+                        value: function () {
                             return this.$.input;
                         }
                     },
@@ -243,7 +272,7 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                                     // provided by neon-animation/animations/fade-out-animation.html
                                     name: 'fade-out-animation',
                                     node: this
-                                },{
+                                }, {
                                     name: 'slide-right-animation',
                                     node: this
                                 }]
@@ -259,16 +288,16 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                  * Public Method
                  * */
                 show: function () {
-                    if(this.opened) return;
-                    this.toggleAttribute( 'opened', true );
+                    if (this.opened) return;
+                    this.toggleAttribute('opened', true);
                     this.style.display = 'inline-block';
                     // run scale-up-animation
                     this.cancelAnimation();
                     this.playAnimation('entry');
                 },
                 hide: function () {
-                    if(!this.opened) return;
-                    this.toggleAttribute( 'opened', false );
+                    if (!this.opened) return;
+                    this.toggleAttribute('opened', false);
                     // run fade-out-animation
                     this.cancelAnimation();
                     this.playAnimation('exit');
@@ -292,7 +321,7 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                     // claer input
                     this.inputtingText = '';
                     // scroll
-                    this.async( function() {
+                    this.async(function () {
                         this.$.pushList.scrollTop = 100 + this.$.pushList.$.container.offsetHeight;
                     }, 100);
                 },
@@ -305,14 +334,17 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                 _handleTrack: function (e) {
                     try {
                         // 只能由　Touch event 觸發
-                        if(navigator.maxTouchPoints === 0 ) throw 'Not touch device';
-                        if(navigator.msMaxTouchPoints === 0) throw 'Not touch device';
+                        if (navigator.maxTouchPoints === 0) throw 'Not touch device';
+                        if (navigator.msMaxTouchPoints === 0) throw 'Not touch device';
                         // 開啟時能觸發
-                        if(this.opened === false) throw 'Viewer was closed';
+                        if (this.opened === false) throw 'Viewer was closed';
                         // 排除 <moe-emoji-selector>
-                        if(e.target.classList.contains('moe-emoji-selector')) throw 'Not trigger area';
+                        if (e.target.classList.contains('moe-emoji-selector')) throw 'Not trigger area';
 
-                    } catch (err){ console.log(err); return }
+                    } catch (err) {
+                        console.log(err);
+                        return
+                    }
 
                     var state = e.detail.state;
                     var dx = e.detail.dx;
@@ -330,23 +362,32 @@ moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以
                     }
                 },
                 _onNeonAnimationFinish: function () {
-                    switch( this.opened ){
+                    switch (this.opened) {
                         case true:
-                            this.toggleAttribute( 'opened', true );
+                            this.toggleAttribute('opened', true);
                             break;
                         case false:
-                            this.toggleAttribute( 'opened', false );
+                            this.toggleAttribute('opened', false);
                             this.style.display = 'none';
                             break;
                     }
                 },
-                _showEmojiSelector: function() {
-                    this._emojiSelectorHide = this._emojiSelectorHide ? false : true ;
-                },
-                _computeSubmitClass: function(e) {
+                _computeSubmitClass: function (e) {
                     if (this.inputtingText.trim() === '') return '';
                     return 'inputting';
                 },
+                _toggleTailSelector: function () {
+                    this._tailSelectorHide = this._tailSelectorHide ? false : true;
+                },
+                _toggleEmojiSelector: function () {
+                    this._emojiSelectorHide = this._emojiSelectorHide ? false : true;
+                },
+                _handleSelectEmoji: function () {
+                    this._toggleEmojiSelector();
+                },
+                _handleSelectTail: function () {
+                    this._toggleTailSelector();
+                }
             });
 
         })();
