@@ -1,5 +1,24 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="bower_components/iron-meta/iron-meta.html">
+<!--
+# moe-emojiset
+
+moe-emojiset 的主要功能是將放入這個元件內的表情符號註冊到 iron-meta 的 type "MOE_EMOJIS" 以供其他元件使用
+
+## 範例：
+
+    <moe-emojiset type="like">
+        (・∀・)
+        (o・ω・o)
+    </moe-emojiset>
+
+以上會註冊兩個表情符號到 iron-meta
+
+` var emojis = new Polymer.IronMetaQuery({type:"MOE_EMOJIS"}).byKey("like");
+以上會回傳 "like" 表情符號陣列
+詳細的取用方式參照 iron-meta 說明
+
+-->
 <dom-module id="moe-emojiset">
     <script>
         (function () {
@@ -13,14 +32,12 @@
                     style: 'display: none;'
                 },
 
-                properties: {
-                },
                 ready: function() {
-                    // Get div those contents Emojis
+                    // Get div those contents Emojis.
                     var content = Polymer.dom(this).querySelectorAll('div');
                     var emojis = [];
 
-                    // Arrayfy Emojis
+                    // Arrayfy Emojis.
                     for(var i = 0; i < content.length; i++) {
                         var target = content[i];
                         emojis.push({
@@ -28,7 +45,7 @@
                             emojis: target.innerText.replace(/ /g,'').split("\n").filter(function(n){ return n != "" })
                         });
                     }
-                    // Store Emojis into IronMeta
+                    // Store Emojis into IronMeta.
                     for (var i = 0; i < emojis.length; i++) {
                         new Polymer.IronMeta({
                             type: "MOE_EMOJIS",
@@ -36,7 +53,6 @@
                             value: emojis[i].emojis
                         });
                     }
-
 
                 },
             })

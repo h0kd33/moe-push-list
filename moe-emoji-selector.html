@@ -11,6 +11,17 @@
 
 <link rel="import" href="emoji-basic.html">
 
+<!--
+# moe-emoji-selector
+
+moe-emoji-selector 是一個AA表情選擇元件
+
+## 範例
+    <moe-emoji-selector emojis="like dislike"></moe-emoji-selector>
+
+以上會產生一個 moe-emoji-selector 包含了 type 是 like 和 dislike 的表情符號
+-->
+
 <dom-module id="moe-emoji-selector">
     <template>
         <style include="iron-flex iron-flex-alignment iron-positioning">
@@ -103,34 +114,28 @@
                 is: 'moe-emoji-selector',
 
                 properties: {
-                    data: {
-                        type: Array,
-                        observer: "_dataChanged",
-                        value: function () {
-                            return []
-                        }
-                    },
+                    /* 要顯示在 moe-emoji-selector 的 emoji 類別 */
                     emojis: {
                         type: String
                     },
+                    /* 被選取的 emoji 類別頁面 */
                     selected: {
                         type: Number,
                         value: 0
                     },
+                    /* 被選取的 emoji */
                     selectedEmoji: {
                         type: String,
                         notify: true,
                         reflectToAttribute: true
                     },
+                    /* 保存 emojis 的 obj */
                     _emojiSet: {
                         type: Array,
                         value: function() {
                             return []
                         }
                     }
-                },
-                _dataChanged: function () {
-                    console.log(' data initialized ')
                 },
                 _handleTrack: function (e) {
                     e.preventDefault();
@@ -157,8 +162,14 @@
                             break;
                     }
                 },
+                /**
+                 *  Private
+                 * */
                 _appendEmoji: function () {
+                    // If emojis was appended then return.
                     if (this._emojiAppended) return;
+
+                    // Append emojis into selector pages.
                     this.async(function () {
                         var targets = this.$.pages.children;
                         for (var i = 0; i < this._emojiSet.length; i++) {
@@ -173,40 +184,49 @@
                                 Polymer.dom(target).appendChild(div);
                             }
                         }
+                        // Append complete.
                         this._emojiAppended = true;
                     }, 1);
                 },
                 _initialize: function () {
-                    // cache selector
+                    // Cache selector
                     var pages = this.$.pages,
                         tabs = this.$.tabs;
-                    // variable
+                    // Variable
                     var emojisMeta  = new Polymer.IronMetaQuery({type:"MOE_EMOJIS"}),
                         key = this.emojis.split(/[ ,]+/);
 
-                    // generate _emojiSet
+                    // Generate _emojiSet content emojis object.
                     key.forEach((function(key){
                         var obj = {
                             emojis: emojisMeta.byKey(key),
                             type: key
                         };
+                        // If type of emoji is exist then push into emojiSet.
                         if(typeof(obj.emojis) !== 'undefined' ) {
                             this._emojiSet.push(obj);
                             return
                         };
-                        // if meta has no emoijs throw err msg
+                        // If meta has no emoijs throw err msg.
                         console.log( 'Emoji "' + key + '" not exist.');
                     }).bind(this));
 
+                    // Set tabs.
                     for (var i = 0; i < this._emojiSet.length; i++) {
                         var tab = document.createElement('paper-tab');
                         tab.innerText = this._emojiSet[i].emojis[0];
                         Polymer.dom(tabs).appendChild(tab);
                     }
                 },
+                /**
+                 *  Life
+                 * */
                 ready: function () {
                     this._initialize();
                 },
+                /**
+                 *  Others
+                 * */
                 _emojiAppended: false,
             });
         })();

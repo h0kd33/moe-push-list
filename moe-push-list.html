@@ -1,5 +1,14 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
 
+<!--
+# moe-push-list
+
+moe-push-list 是用來顯示推文的元件
+
+## 範例
+    <moe-push-list data="[[data]]"></moe-push-list>
+
+-->
 <dom-module id="moe-push-list">
     <template>
         <style>
@@ -142,6 +151,9 @@
                 is: 'moe-push-list',
 
                 properties: {
+                    /**
+                     *  推文串內容
+                     *  */
                     data: {
                         type: Array,
                         observer: "_dataChanged",
@@ -149,6 +161,9 @@
                             return []
                         }
                     },
+                    /**
+                     *  TODO: 這個推文串的ID和資料
+                     *  */
                     pushesInfo: {
                         type: Object,
                         value: function () {
@@ -158,16 +173,25 @@
                             }
                         }
                     },
+                    /**
+                     *  展開與否
+                     *  */
                     expand: {
                         type: Boolean,
                         value: false,
                         reflectToAttribute: true
                     },
+                    /**
+                     *  最多顯示幾則推文
+                     *  */
                     maxView: {
                         type: Number,
                         value: 8,
                         observer: '_maxViewChanged'
                     },
+                    /**
+                     *  TODO: 管理模式?
+                     *  */
                     isAdmin: {
                         value: false
                     }

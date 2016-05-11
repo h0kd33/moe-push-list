@@ -1,4 +1,7 @@
+<!-- Polymer -->
 <link rel="import" href="bower_components/polymer/polymer.html">
+
+<!-- Polymer Elements -->
 <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="bower_components/iron-icons/iron-icons.html">
@@ -14,11 +17,20 @@
 <link rel="import" href="bower_components/neon-animation/animations/slide-right-animation.html">
 <link rel="import" href="bower_components/neon-animation/animations/fade-out-animation.html">
 
+<!-- Moe Elements -->
 <link rel="import" href="moe-push-list.html">
 <link rel="import" href="emoji-basic.html">
 <link rel="import" href="emoji-anime.html">
 <link rel="import" href="moe-emoji-selector.html">
 
+<!--
+# moe-push-view
+moe-push-view 是一個閱讀推文用的抽屜，由右方展開，裡面可以回應推文。
+
+## 範例
+    <moe-push-view></moe-push-view>
+
+-->
 <dom-module id="moe-push-view">
     <template>
         <style include="iron-flex iron-flex-alignment iron-positioning">
@@ -178,6 +190,9 @@
                     Polymer.NeonAnimationRunnerBehavior
                 ],
                 properties: {
+                    /**
+                     *  要顯示的推文串內容
+                     * */
                     data: {
                         type: Array,
                         value: function () {
@@ -185,18 +200,26 @@
                         },
                         observer: '_dataChanged'
                     },
+                    /**
+                     *  收起或展開
+                     * */
                     opened: {
                         type: Boolean,
                         value: false
                     },
+                    /**
+                     *  暫存輸入中的推文
+                     * */
                     inputtingText: { 
                         type: String
                     },
+                    /**
+                     *  暫存被 moe-emoji-selector 選取的表情符號
+                     * */
                     selectedEmoji: {
                         type: String,
                         value: '(^O^)'
                     },
-
                     _emojiSelectorHide: {
                         type: Boolean,
                         value: true
@@ -207,6 +230,7 @@
                             return this.$.input;
                         }
                     },
+                    /* neon 動畫設定 */
                     animationConfig: {
                         value: function () {
                             return {
